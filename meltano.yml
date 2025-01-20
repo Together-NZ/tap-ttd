@@ -1,0 +1,43 @@
+version: 1
+send_anonymous_usage_stats: true
+project_id: "tap-ttd"
+default_environment: test
+environments:
+- name: test
+plugins:
+  extractors:
+  - name: "tap-ttd"
+    namespace: "tap_ttd"
+    pip_url: -e .
+    capabilities:
+    - state
+    - catalog
+    - discover
+    - about
+    - stream-maps
+    config :
+      api_key: ${TAP_TTD_API_KEY}
+      start_date: '2025-01-01T00:00:00Z'
+      end_date: '2025-01-02T00:00:00Z'
+
+
+  loaders:
+  - name: target-jsonl
+    variant: andyh1203
+    pip_url: target-jsonl
+  - name: target-bigquery
+    variant: z3z1ma
+    pip_url: git+https://github.com/z3z1ma/target-bigquery.git
+    config:
+      dataset: ${BQ_DATASET}
+      project: uowaikato-main
+      location: australia-southeast1
+      denormalized: false
+      schema_resolver_version: 2
+      column_name_transforms:
+        add_underscore_when_invalid: true
+        lower: true
+        snake_case: true
+      fail_fast: false
+      method: ${BQ_METHOD}
+      bucket: australia-southeast1-meltan-00c049c-bigquery-staging
