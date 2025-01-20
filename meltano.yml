@@ -17,8 +17,10 @@ plugins:
     - stream-maps
     config :
       api_key: ${TAP_TTD_API_KEY}
-      start_date: '2025-01-01T00:00:00Z'
-      end_date: '2025-01-02T00:00:00Z'
+      start_date: '{START_DATE}T00:00:00Z'
+      end_date: '{END_DATE}T00:00:00Z'
+      manual: true
+      advertiser_id: ${ADVERTISER_ID}
 
 
   loaders:

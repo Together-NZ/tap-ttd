@@ -34,6 +34,18 @@ class Tapttd(Tap):
             "end_date",
             th.StringType,
             description="The last record date to sync",
+        ),
+        th.Property(
+            "manual",
+            th.BooleanType,
+            required=True,
+            description="Indicate if this is a manual run",
+        ),
+        th.Property(
+            "advertiser_id",
+            th.StringType,
+            required=True,
+            description="The id of the advertiser to sync",
         )
     ).to_dict()
 

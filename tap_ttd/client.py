@@ -17,7 +17,7 @@ import io
 import jsonschema
 from jsonschema import validate
 from googleapiclient.http import MediaIoBaseDownload
-
+import datetime
 import requests
 from singer_sdk.helpers.types import Context
 import logging
@@ -27,7 +27,7 @@ logger.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.DEBUG)
 logger.addHandler(console_handler)
-current_date = datetime.now()
+
 
 class ttdStream(RESTStream):
     """ttd stream class."""
@@ -78,11 +78,18 @@ class ttdStream(RESTStream):
         # Step 1: Submit Query
         if context["operation"] == "query":
             url = self.get_url(context)
-            payload = {
+            if self.config["manual"]:
+                if self.config["end_date"] == "{END_DATE}T00:00:00Z" or self.config["end_date"] is None:
+                    # Default to today's date in ISO format
+                    
+                    end_date = datetime.datetime.now().strftime("%Y-%m-%dT00:00:00Z")
+                else:
+                    end_date = self.config["end_date"]   # Use the provided 'end_date'
+                payload = {
                 "ReportDateFormat": "International",
                 "ReportDateRange": "Custom",
                 "ReportStartDateInclusive": self.config["start_date"],
-                "ReportEndDateExclusive": self.config["end_date"],
+                "ReportEndDateExclusive": end_date,
                 "ReportFileFormat": "CSV",
                 "ReportFrequency": "Once",
                 "IncludeHeaders": "true",
@@ -90,8 +97,27 @@ class ttdStream(RESTStream):
                 "ReportScheduleName": "TTD",
                 "ReportTemplateId": 168005,
                 "TimeZone": "Pacific/Auckland",
-                "AdvertiserFilters": ["ao3nvmu"],
-            }
+                "AdvertiserFilters": [self.config["advertiser_id"]],
+                }
+                logger.info('Querying TTD Report with Manual Mode')
+            else:
+                payload = {
+                "ReportDateFormat": "International",
+                "ReportDateRange": "LastXDays",
+                "LookbackDays":1,
+                "ReportFileFormat": "CSV",
+                "ReportFrequency": "Once",
+                "IncludeHeaders": "true",
+                "ReportNumericFormat": "International",
+                "ReportScheduleName": "TTD",
+                "ReportTemplateId": 168005,
+                "TimeZone": "Pacific/Auckland",
+                "AdvertiserFilters": [
+                self.config["advertiser_id"]
+                ],
+                }
+                logger.info('Querying TTD Report with Automatic Mode')
+
             headers = {"TTD-Auth": self.config["api_key"]}
             response = requests.post(url, headers=headers, json=payload)
 
@@ -109,7 +135,7 @@ class ttdStream(RESTStream):
             url = self.get_url(context)
             headers = {"TTD-Auth": self.config["api_key"]}
             payload = {
-                "AdvertiserIds": ["ao3nvmu"],
+                "AdvertiserIds": [self.config["advertiser_id"]],
                 "PageSize": 10,
                 "PageStartIndex": 0,
                 "ReportScheduleIds": [report_schedule_id],
