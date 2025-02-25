@@ -206,10 +206,13 @@ class ttdStream(RESTStream):
             #        writer.writerow(row)  # Use writer.writerow() to write each row
             for row in csv_reader: 
                 if not start_reading:
+                    logger.info("Can not start reading now")
                     if 'Date' in row:
+                        logger.info('Found Date')
                         start_reading = True
                         continue
-                else:          
+                else:
+                        logger.info(f"Processing row: {row}")                
                         schema_fields = list(self.schema["properties"].keys())
                         # Ensure the row has the correct number of fields
                         if len(row) != len(schema_fields):
@@ -230,9 +233,12 @@ class ttdStream(RESTStream):
 
                         try:
                             # Validate the mapped row against the schema
+                            logger.info(f"Validating row: {row_dict}")
                             validate(instance=row_dict, schema=self.schema)
                             yield row_dict  # Yield the validated row as a dictionary
                         except jsonschema.exceptions.ValidationError as e:
                             # Handle validation errors (e.g., log or skip invalid rows)
                             self.logger.error(f"Validation error in row {row}: {e}")
+
+
 
