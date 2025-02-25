@@ -209,8 +209,7 @@ class ttdStream(RESTStream):
                     if 'Date' in row:
                         start_reading = True
                         continue
-                else:
-                    for row in csv_reader:                
+                else:          
                         schema_fields = list(self.schema["properties"].keys())
                         # Ensure the row has the correct number of fields
                         if len(row) != len(schema_fields):
