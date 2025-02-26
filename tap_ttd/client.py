@@ -205,6 +205,7 @@ class ttdStream(RESTStream):
             #    for row in csv_reader:
             #        writer.writerow(row)  # Use writer.writerow() to write each row
             for row in csv_reader: 
+                logger.info('testing')
                 if not start_reading:
                     logger.info("Can not start reading now")
                     if 'Date' in row:
