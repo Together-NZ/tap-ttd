@@ -85,6 +85,7 @@ class ttdStream(RESTStream):
                     end_date = datetime.datetime.now().strftime("%Y-%m-%dT00:00:00Z")
                 else:
                     end_date = self.config["end_date"]   # Use the provided 'end_date'
+
                 payload = {
                 "ReportDateFormat": "International",
                 "ReportDateRange": "Custom",
@@ -104,7 +105,7 @@ class ttdStream(RESTStream):
                 payload = {
                 "ReportDateFormat": "International",
                 "ReportDateRange": "LastXDays",
-                "LookbackDays":1,
+                "LookbackDays":30,
                 "ReportFileFormat": "CSV",
                 "ReportFrequency": "Once",
                 "IncludeHeaders": "true",
@@ -236,6 +237,8 @@ class ttdStream(RESTStream):
                             # Validate the mapped row against the schema
                             logger.info(f"Validating row: {row_dict}")
                             validate(instance=row_dict, schema=self.schema)
+                            raw=(self._tap.state or {})
+                            self.logger.info(raw)
                             yield row_dict  # Yield the validated row as a dictionary
                         except jsonschema.exceptions.ValidationError as e:
                             # Handle validation errors (e.g., log or skip invalid rows)
