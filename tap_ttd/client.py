@@ -105,7 +105,7 @@ class ttdStream(RESTStream):
                 payload = {
                 "ReportDateFormat": "International",
                 "ReportDateRange": "LastXDays",
-                "LookbackDays":1,
+                "LookbackDays":30,
                 "ReportFileFormat": "CSV",
                 "ReportFrequency": "Once",
                 "IncludeHeaders": "true",
