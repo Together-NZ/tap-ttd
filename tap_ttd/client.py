@@ -206,7 +206,6 @@ class ttdStream(RESTStream):
             #    for row in csv_reader:
             #        writer.writerow(row)  # Use writer.writerow() to write each row
             for row in csv_reader: 
-                logger.info('testing')
                 if not start_reading:
                     logger.info("Can not start reading now")
                     if 'Date' in row:
@@ -235,7 +234,7 @@ class ttdStream(RESTStream):
 
                         try:
                             # Validate the mapped row against the schema
-                            logger.info(f"Validating row: {row_dict}")
+                           
                             validate(instance=row_dict, schema=self.schema)
                             raw=(self._tap.state or {})
                             self.logger.info(raw)
