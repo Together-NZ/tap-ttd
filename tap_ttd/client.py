@@ -105,7 +105,7 @@ class ttdStream(RESTStream):
                 payload = {
                 "ReportDateFormat": "International",
                 "ReportDateRange": "LastXDays",
-                "LookbackDays":7,
+                "LookbackDays":30,
                 "ReportFileFormat": "CSV",
                 "ReportFrequency": "Once",
                 "IncludeHeaders": "true",
@@ -214,7 +214,7 @@ class ttdStream(RESTStream):
                         start_reading = True
                         continue
                 else:
-                        logger.info(f"Processing row: {row}")                
+                                
                         schema_fields = list(self.schema["properties"].keys())
                         # Ensure the row has the correct number of fields
                         if len(row) != len(schema_fields):
