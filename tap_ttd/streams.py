@@ -22,6 +22,7 @@ class StandardStream(ttdStream):
     path = "https://api.thetradedesk.com"
 
     schema = PropertiesList(
+        Property("id", StringType, description="Synthetic primary key for the report row."),
         Property("Date", StringType, description="The date of the record."),
         Property("Partner ID", StringType, description="The ID of the partner."),
         Property("Advertiser ID", StringType, description="The ID of the advertiser."),

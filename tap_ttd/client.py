@@ -214,7 +214,11 @@ class ttdStream(RESTStream):
                         continue
                 else:
                                 
-                        schema_fields = list(self.schema["properties"].keys())
+                        schema_fields = [
+                            field
+                            for field in self.schema["properties"].keys()
+                            if field != "id"
+                        ]
                         # Ensure the row has the correct number of fields
                         if len(row) != len(schema_fields):
                             logger.info(f"Skipping row with incorrect number of fields: {row}")
@@ -232,9 +236,16 @@ class ttdStream(RESTStream):
                             except ValueError:
                                 row_dict[schema_fields[i]] = None  # Handle invalid numbers
 
+                        row_dict["id"] = "|".join([
+                            row_dict.get("Date", ""),
+                            row_dict.get("Advertiser ID", ""),
+                            row_dict.get("Campaign ID", ""),
+                            row_dict.get("Ad Group ID", ""),
+                            row_dict.get("Creative ID", ""),
+                        ])
+
                         try:
                             # Validate the mapped row against the schema
-                           
                             validate(instance=row_dict, schema=self.schema)
                             raw=(self._tap.state or {})
                             self.logger.info(raw)
